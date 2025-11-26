@@ -1,3 +1,22 @@
+# twikit (Rust + PyO3)
+
+This repository provides a minimal Rust implementation of core twikit components and Python bindings via PyO3 / maturin.
+
+Build & install into your active Python environment (recommended):
+
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install maturin
+maturin develop -i python3
+python3 examples/python_example.py
+```
+
+Or build a wheel:
+
+```bash
+maturin build --release
+```
 <img src="https://i.imgur.com/iJe6rsZ.png"  width="500">
 
 
