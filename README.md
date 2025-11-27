@@ -154,15 +154,88 @@ await client.send_dm('123456789', 'Hello')
 ```
 
 **Get trends**
-```python
-await client.get_trends('trending')
+# twikit — Rust library + PyO3 bindings
+
+This repository contains a Rust implementation of core twikit components and Python bindings built with PyO3 and maturin.
+
+This README is focused on Rust developers and on how to build and test the Python extension from this repository.
+
+**What this repo provides**
+- A Rust library exposing a Python module named `twikit` (see `src/lib.rs`).
+- Small Rust modules with PyO3 bindings: `Bookmark`, `Community`, `Geo`, `User`, `Tweet`, `Client`, `Media`, `Stream`, `NotificationManager`.
+
+**Goals**
+- Provide fast Rust implementations for core functionality.
+- Export a lightweight, importable Python module via PyO3/maturin.
+
+**Quick Rust developer commands**
+- Check the code compiles: `cargo check`
+- Build (release): `cargo build --release`
+- Run unit tests: `cargo test`
+- Format code: `cargo fmt`
+
+**Build Python extension (using your active Python — conda or system)**
+
+Use `maturin` to build and install the extension into your active Python environment.
+
+Recommended: use your current conda env (no venv) or activate the Python you want to use.
+
+Example (using conda env):
+
+```bash
+# from repo root
+python3 -m pip install --upgrade maturin
+# build & install in-place into the active Python
+maturin develop
 ```
 
-More Examples: [examples](https://github.com/d60/twikit/tree/main/examples) <br>
+If you prefer a virtualenv instead of conda:
 
-## Contributing
+```bash
+python3 -m venv .venv
+source .venv/bin/activate
+pip install maturin
+maturin develop
+```
 
-If you encounter any bugs or issues, please report them on [issues](https://github.com/d60/twikit/issues).
+After installation you can run the example script:
 
+```bash
+python3 examples/python_example.py
+```
 
-If you find this library useful, consider starring this repository⭐️
+**Notes**
+- If `maturin develop` fails because both `VIRTUAL_ENV` and `CONDA_PREFIX` are set, run the command from the desired environment only (unset one of them in your shell for the build process).
+- The Python module name is `twikit` and is defined in `src/lib.rs`.
+
+**API (exported types)**
+- `Bookmark` — bookmark manager
+- `Community` — community manager
+- `Geo` — geo utilities (haversine distance)
+- `User` — user store
+- `Tweet` — tweet structure
+- `Client` — simple client with `post_tweet`/`get_tweet`
+- `Media` — media upload helper
+- `Stream` — streaming helper that calls Python callbacks
+- `NotificationManager` — mock notification sender
+
+**Testing the Python API**
+After `maturin develop` you can import the module in Python:
+
+```python
+import twikit
+
+b = twikit.Bookmark()
+b.add('https://example.com')
+print(b.list())
+
+client = twikit.Client()
+t = client.post_tweet('hello from rust', 'alice')
+print(t.to_dict())
+```
+
+**Contributing / next steps**
+- Expand Rust implementations for modules you need (I can help port more of the original Python API).
+- Add integration tests and CI to build wheels automatically.
+
+If you want me to run the build in your active conda environment now, tell me and I'll run `maturin develop` and execute the example.
